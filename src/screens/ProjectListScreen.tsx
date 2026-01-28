@@ -28,26 +28,25 @@ export function ProjectListScreen({ navigation }: ProjectListScreenProps) {
   const handleAddProject = useCallback(() => {
     const newProject: Project = {
       id: `project-${Date.now()}`,
-      name: `Project ${projectsWithStats.length + 1}`,
+      name: 'New project',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
     dispatch(addProject(newProject));
     sync();
-  }, [dispatch, projectsWithStats.length, sync]);
+  }, [dispatch, sync]);
 
   const renderItem = useCallback(
-    ({ item, index }: { item: typeof projectsWithStats[0]; index: number }) => (
-      <ProjectCard
-        project={item}
-        onPress={handleProjectPress}
-        index={index}
-      />
+    ({ item }: { item: (typeof projectsWithStats)[0] }) => (
+      <ProjectCard project={item} onPress={handleProjectPress} />
     ),
     [handleProjectPress]
   );
 
-  const keyExtractor = useCallback((item: typeof projectsWithStats[0]) => item.id, []);
+  const keyExtractor = useCallback(
+    (item: (typeof projectsWithStats)[0]) => item.id,
+    []
+  );
 
   const emptyComponent = useMemo(
     () => (
@@ -72,11 +71,6 @@ export function ProjectListScreen({ navigation }: ProjectListScreenProps) {
         ]}
         ListEmptyComponent={emptyComponent}
         showsVerticalScrollIndicator={false}
-        removeClippedSubviews
-        maxToRenderPerBatch={10}
-        updateCellsBatchingPeriod={50}
-        initialNumToRender={10}
-        windowSize={10}
       />
       <FAB onPress={handleAddProject} />
     </View>

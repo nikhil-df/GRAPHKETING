@@ -4,8 +4,7 @@ import type { KanbanBoardScreenProps } from '../navigation/types';
 import { useKanbanBoardStyles } from '../theme/styles';
 import { DraggableKanbanColumn } from '../components/DraggableKanbanColumn';
 import { useAppSelector, useAppDispatch } from '../hooks';
-// Tasks filtered in component for better performance
-import { updateTaskStatus, addTask } from '../store/slices';
+import { addTask, updateTaskStatus } from '../store/slices';
 import { useFakeSync } from '../hooks/useStorageSync';
 import { TASK_STATUSES } from '../utils/constants';
 import type { TaskStatus, Task } from '../utils/types';
@@ -34,6 +33,9 @@ export function KanbanBoardScreen({
     projectTasks.forEach((task) => {
       grouped[task.status].push(task);
     });
+    (Object.keys(grouped) as TaskStatus[]).forEach((status) => {
+      grouped[status].sort((a, b) => a.order - b.order);
+    });
     return grouped;
   }, [projectTasks]);
 
@@ -60,7 +62,6 @@ export function KanbanBoardScreen({
       dispatch(addTask(newTask));
       sync();
 
-      // Navigate to task details to edit
       setTimeout(() => {
         navigation.navigate('TaskDetails', { projectId, taskId: newTask.id });
       }, 100);
