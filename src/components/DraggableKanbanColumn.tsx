@@ -1,8 +1,9 @@
 import React, { memo, useCallback } from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import type { TaskStatus, Task } from '../utils/types';
-import { DraggableTaskCard } from './DraggableTaskCard';
+import { DraggableTaskCard, type DragSharedValues } from './DraggableTaskCard';
 import { useKanbanColumnStyles } from '../theme/styles';
+import type { DragLayout } from './DraggedCardOverlay';
 
 interface DraggableKanbanColumnProps {
   status: TaskStatus;
@@ -11,6 +12,9 @@ interface DraggableKanbanColumnProps {
   onTaskMove: (taskId: string, newStatus: TaskStatus, newOrder: number) => void;
   onAddTask: (status: TaskStatus) => void;
   onTaskPress?: (taskId: string) => void;
+  onDragStart?: (taskId: string, layout: DragLayout, refs: DragSharedValues) => void;
+  onDragEndCallback?: (taskId: string) => void;
+  boardOrigin: { x: number; y: number } | null;
 }
 
 function DraggableKanbanColumnComponent({
@@ -20,6 +24,9 @@ function DraggableKanbanColumnComponent({
   onTaskMove,
   onAddTask,
   onTaskPress,
+  onDragStart,
+  onDragEndCallback,
+  boardOrigin,
 }: DraggableKanbanColumnProps) {
   const styles = useKanbanColumnStyles();
   const handleAdd = useCallback(
@@ -45,6 +52,9 @@ function DraggableKanbanColumnComponent({
             index={index}
             onDragEnd={onTaskMove}
             onPress={onTaskPress}
+            onDragStart={onDragStart}
+            onDragEndCallback={onDragEndCallback}
+            boardOrigin={boardOrigin}
           />
         ))}
         <TouchableOpacity
